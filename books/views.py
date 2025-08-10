@@ -6,11 +6,13 @@ import requests
 from django.core.paginator import Paginator
 from googleapiclient.discovery import build
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
+# Debugging line to check if API_KEY is loaded correctly
 
 # Create your views here.
 
-API_KEY = "AIzaSyDtMDChAEL5SWcnjx1IwtAhU2qDsWw0iNg"
+# API_KEY = "AIzaSyDtMDChAEL5SWcnjx1IwtAhU2qDsWw0iNg"
 
 @login_required
 def index(request):
