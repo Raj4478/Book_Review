@@ -31,7 +31,12 @@ SECRET_KEY = 'django-insecure-uuqlk1fji9td-%g!+^-y)fvhehd7skmx+gjijpep_c(g$6^jdf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "book-review-sandy.vercel.app",   # add your Vercel deployment URL here
+    "book-review-q6wgxe0rh-rajeshwar-singhs-projects.vercel.app"  
+]
 
 
 # Application definition
