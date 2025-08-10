@@ -1,0 +1,113 @@
+<style>
+.book-list {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scroll-behavior: smooth;
+}
+
+/* Card Styling */
+.card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    overflow: hidden;
+    width: 270px;
+    min-height: 380px; /* Consistent height */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+}
+
+/* Image */
+.card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover img {
+    transform: scale(1.05);
+}
+
+/* Card Content */
+.card-body {
+    flex: 1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.card-body .title {
+    font-weight: bold;
+    font-size: 16px;
+    color: #222; /* Dark title */
+    margin-bottom: 8px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limit title to 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.card-body .author {
+    font-size: 14px;
+    font-style: italic;
+    color: #555; /* Darker gray for author */
+    margin-bottom: 5px;
+}
+
+.card-body .year {
+    font-size: 12px;
+    color: #777; /* Lighter gray for year */
+}
+
+/* Scrollbar styling */
+.book-list::-webkit-scrollbar {
+    height: 8px;
+}
+.book-list::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+}
+.book-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+</style>
+
+<div class="book-list">
+    {% for book in books|slice:":4" %}
+        <a href="{% url 'book_detail' book.id %}" class="card-link">
+            <div class="card">
+                <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
+                <div class="card-body">
+                    <p class="title">{{ book.volumeInfo.title }}</p>
+                    <p class="author">
+                        {% if book.volumeInfo.authors %}
+                            {{ book.volumeInfo.authors|join:", " }}
+                        {% else %}
+                            Unknown Author
+                        {% endif %}
+                    </p>
+                    <p class="year">{{ book.volumeInfo.publishedDate }}</p>
+                </div>
+            </div>
+        </a>
+    {% endfor %}
+</div>

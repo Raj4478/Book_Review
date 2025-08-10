@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.env
+*.DS_Store
+
+# Node
+node_modules/
+
+# VS Code
+.vscode/
+
+# Other
+*.log
+*.bak
+*.tmp

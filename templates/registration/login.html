@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login</title>
+  <style>
+    /* Background Gradient Animation */
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(-45deg, #6a11cb, #2575fc, #6a11cb);
+      background-size: 400% 400%;
+      animation: gradientBG 12s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    /* Glassmorphic Login Container */
+    .login-container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      padding: 2.5rem 3rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      width: 350px;
+      color: white;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 1.2rem;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.85);
+      font-size: 1rem;
+      transition: box-shadow 0.3s ease, transform 0.2s ease;
+    }
+
+    input:focus {
+      outline: none;
+      box-shadow: 0 0 8px rgba(37, 117, 252, 0.6);
+      transform: scale(1.02);
+    }
+
+    .error-message {
+      color: #ff4d4d;
+      font-size: 0.85rem;
+      margin-top: -0.75rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      background: linear-gradient(90deg, #2575fc, #6a11cb);
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37, 117, 252, 0.4);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .footer a {
+      color: #ffe;
+      font-weight: bold;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer a:hover {
+      color: #ffd700;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+    <form id="loginForm" method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
+      
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        required
+        minlength="3"
+        maxlength="150"
+        pattern="[a-zA-Z0-9_]+"
+        title="Username should be alphanumeric with underscores only."
+        autocomplete="username"
+      />
+      <div id="usernameError" class="error-message">Please enter a valid username.</div>
+      
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+        minlength="6"
+        autocomplete="current-password"
+      />
+      <div id="passwordError" class="error-message">Password must be at least 6 characters.</div>
+      
+      <button type="submit">Log In</button>
+    </form>
+    <div class="footer">
+      Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+    </div> 
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const usernameError = document.getElementById('usernameError');
+    const passwordError = document.getElementById('passwordError');
+
+    form.addEventListener('submit', function (e) {
+      let valid = true;
+      const usernamePattern = /^[a-zA-Z0-9_]+$/;
+
+      if (
+        usernameInput.value.length < 3 ||
+        usernameInput.value.length > 150 ||
+        !usernamePattern.test(usernameInput.value)
+      ) {
+        usernameError.style.display = 'block';
+        valid = false;
+      } else {
+        usernameError.style.display = 'none';
+      }
+
+      if (passwordInput.value.length < 6) {
+        passwordError.style.display = 'block';
+        valid = false;
+      } else {
+        passwordError.style.display = 'none';
+      }
+
+      if (!valid) e.preventDefault();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #d4fc79, #96e6a1);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(90deg, #ff758c, #ff7eb3);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .results-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .book-row {
+            display: flex;
+            align-items: flex-start;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .book-row:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .book-image {
+            flex: 0 0 130px;
+            margin-right: 20px;
+        }
+
+        .book-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .book-details {
+            flex: 1;
+        }
+
+        .book-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .book-author {
+            font-size: 1em;
+            color: #555;
+            margin: 6px 0;
+            font-weight: 500;
+        }
+
+        .book-description {
+            font-size: 0.95em;
+            color: #444;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        a.details-link {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 10px 16px;
+            background: linear-gradient(90deg, #ff758c, #ff7eb3);
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        a.details-link:hover {
+            background: linear-gradient(90deg, #ff4e8f, #e8416b);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .pagination a, .pagination span {
+            padding: 8px 14px;
+            background: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+
+        .pagination a:hover {
+            background: linear-gradient(90deg, #ff758c, #ff7eb3);
+            color: white;
+        }
+
+        .pagination .current {
+            background: linear-gradient(90deg, #ff4e8f, #e8416b);
+            color: white;
+            pointer-events: none;
+        }
+
+        @media (max-width: 600px) {
+            .book-row {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .book-image {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Search Results for "{{ query }}"</h1>
+    </header>
+
+    <div class="results-container">
+        {% if books %}
+            {% for book in books %}
+                <div class="book-row">
+                    <div class="book-image">
+                        {% if book.volumeInfo.imageLinks %}
+                            <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/120x160?text=No+Image" alt="No Image">
+                        {% endif %}
+                    </div>
+                    <div class="book-details">
+                        <p class="book-title">{{ book.volumeInfo.title }}</p>
+                        <p class="book-author">
+                            {% if book.volumeInfo.authors %}
+                                {{ book.volumeInfo.authors|join:", " }}
+                            {% else %}
+                                Unknown Author
+                            {% endif %}
+                        </p>
+                        <p class="book-description">
+                            {% if book.volumeInfo.description %}
+                                {{ book.volumeInfo.description|truncatewords:30 }}
+                            {% else %}
+                                No description available.
+                            {% endif %}
+                        </p>
+                        <a href="{% url 'book_detail' book.id %}" class="details-link">View Details</a>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Pagination -->
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">« Prev</a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <span class="current">{{ num }}</span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a href="?q={{ query }}&page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a href="?q={{ query }}&page={{ page_obj.next_page_number }}">Next »</a>
+                {% endif %}
+            </div>
+
+        {% else %}
+            <p style="text-align:center; font-size:1.1em;">No books found for your search.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
